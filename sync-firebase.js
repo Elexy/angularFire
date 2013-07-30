@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("firebase", ["SyncResource"]);
-angular.module("firebase").factory("firebaseProtocol", ["$q", "syncEvents", function($q, $syncEvents) {
+angular.module("firebase").factory("firebaseProtocol", ["$q", "$differ", "syncEvents", function($q, $differ, $syncEvents) {
   function FirebaseProtocol(url) {
     this._ref = new Firebase(url);
   }
@@ -19,6 +19,10 @@ angular.module("firebase").factory("firebaseProtocol", ["$q", "syncEvents", func
   };
   FirebaseProtocol.prototype.change = function (binder, delta) {
     // If a type is not specified on the delta this will be called.
+    if (angular.equals(delta.newVal, delta.oldVal)) {
+      return;
+    }
+    // TODO: Find diff for [] and {} and only send child events.
     binder.firebaseRef.set(delta.data);
   };
   FirebaseProtocol.prototype.subscribe = function(binder, cb) {
