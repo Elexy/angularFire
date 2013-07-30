@@ -1,0 +1,1 @@
+Hacking on [syncResource](https://github.com/jeffbcross/syncResource) integration with Firebase
