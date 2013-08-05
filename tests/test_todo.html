@@ -49,10 +49,16 @@
     var _url = 'https://syncResourceTests.firebaseio-demo.com';
 
     angular.module("todo", ["SyncResource", "firebase"]);
-    function Todo($scope, $syncResource, firebaseProtocol) {
+    function Todo($scope, $syncResource, $binderTypes, firebaseProtocol) {
       _scope = $scope;
       $scope.todos = [];
       $scope.newTodo = '';
+
+      var syncer = $syncResource({protocol: firebaseProtocol(_url)});
+      var binder = syncer.bind({
+        scope: $scope, model: 'todos',
+        query: {path: "/todos"}, type: $binderTypes.COLLECTION
+      });
 
       $scope.addTodo = function() {
         if (!$scope.newTodo.length) {
@@ -64,14 +70,10 @@
         });
         $scope.newTodo = '';
       };
+
       $scope.removeTodo = function(todo) {
         $scope.todos.splice($scope.todos.indexOf(todo), 1);
       };
-
-      var syncer = $syncResource({protocol: firebaseProtocol(_url)});
-      var binder = syncer.bind({
-        scope: $scope, model: 'todos', query: {path: "/todos"}
-      });
     }
 
     function testIfInDOM(todo, node) {
